@@ -78,14 +78,21 @@ int person_traversal(struct person *people){
 int save_file(struct person *people, const char *filename){
 	//打开文件
 	FILE *fp = fopen(filename, "w");
-    if (fp == NULL) return -1;
+    if (fp == NULL){
+        INFO("FILE %s can't open", filename);
+        perror("Failed to open file");
+        return -1;
+    } 
 	
-    //循环文件读取
+    //循环文件写入
     struct person* temp = NULL;
     for (temp = people; temp != NULL; temp = temp->next){
         fprintf(fp, "name: %s, phone: %s", temp->name, temp->phone);
         fflush(fp);
     }
+
+    fclose(fp);
+    return 0;
 }
 
 int parser_token(char *buffer, int length, char *name, char *phone){
@@ -148,6 +155,9 @@ int load_file(struct person **ppeople, int *count, const char *filename){
 		
 		(*count) ++;
     }
+
+    fclose(fp);
+    return 0;
     
 }
 
@@ -197,17 +207,17 @@ int delete_entry(struct contacts* cts){
 	//person_search
 	struct person *p = person_search(cts->people, name);
     if (p == NULL){
-        INFO("Person NOT Found!");
+        INFO("Person NOT Found!\n");
         free(p);
         return -2;
     }
-    INFO("Found name: %s, phone: %s", p->name, p->phone);
+    INFO("Found name: %s, phone: %s\n", p->name, p->phone);
 	//delete
     person_delete(&cts->people, p);
     free(p);
 
     cts->count--;
-    INFO("Success Delete!");
+    INFO("Success Deleten\n");
     return 0;
 	
 }
@@ -224,11 +234,11 @@ int search_entry(struct contacts* cts){
 	//person_search
     struct person *p = person_search(cts->people, name);
     if (p == NULL){
-        INFO("Person NOT Found!");
+        INFO("Person NOT Found!\n");
         free(p);
         return -2;
     }
-    INFO("Found name: %s, phone: %s", p->name, p->phone);
+    INFO("Found name: %s, phone: %s\n", p->name, p->phone);
 
     return 0;
 }
@@ -241,7 +251,9 @@ int save_entry(struct contacts *cts) {
 	char filename[MAX_NAME] = {0};
 	scanf("%s", filename);
 
-	save_file(cts->people, filename);
+	if(!save_file(cts->people, filename)){
+        INFO("Success SaveFile!");
+    }
 	
 }
 
@@ -252,7 +264,9 @@ int load_entry(struct contacts *cts) {
 	char filename[MAX_NAME] = {0};
 	scanf("%s", filename);
 
-	load_file(&cts->people, &cts->count, filename);
+	if(!load_file(&cts->people, &cts->count, filename)){
+        INFO("Success LoadFile!");
+    }
 }
 
 void menu_info(void) {

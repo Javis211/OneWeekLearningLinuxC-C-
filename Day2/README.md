@@ -999,3 +999,21 @@ exit:
    - 函数内部修改传入的指针变量，
 
 3. 做任何项目，一定要分层次去写，调试和使用代码会特别方便
+
+#### 问题:
+
+1. fopen为何打不开文件
+
+   - 原因:文件权限不够,需要chmod添加读写权限,或者用sudo执行程序,这怎么办(问king老师)
+
+   - 代码中加入错误判断,辅助帮助判断错误形式
+
+   - ```
+     if (fp == NULL){
+             INFO("FILE %s can't open", filename);
+             perror("Failed to open file");
+             return -1;
+         } 
+     ```
+
+     
